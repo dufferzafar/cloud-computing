@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Run command on all nodes
+
+# TODO: Expand $NODE in all arguments
+# eg: ./run-all ls /home/$NODE
+for NODE in $(cut -f2 hosts);
+do
+    echo $NODE;
+    ssh -qt $NODE $*;
+    printf "\n";
+done
