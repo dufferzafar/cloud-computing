@@ -27,11 +27,18 @@ hdfs-du:
 hdfs-report:
 	./run vm1 hdfs dfsadmin -report
 
+# By default it asks to change password
 root-pass:
 	ssh root@vm1
 	ssh root@vm2
 	ssh root@vm3
 	ssh root@vm4
+
+user-pass:
+	ssh vm1
+	ssh vm2
+	ssh vm3
+	ssh vm4
 
 mount-src-harish:
 	@#./run vm1 mkdir -p "~/github-analytics/src-harish"
