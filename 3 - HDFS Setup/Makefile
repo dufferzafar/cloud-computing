@@ -51,4 +51,26 @@ mount-src-zafar:
 
 # Sync files to baadal machines
 sync:
-	@grep -v "^#" hosts | cut -f2 | xargs -I{} rsync -a --info=progress2 ./* {}:"~/hdfs-setup/"
+	@grep -v "^#" hosts | cut -f2 | xargs -I{} rsync -a --info=progress2 . {}:"~/hdfs-setup/"
+
+# Change paths
+edit-hdfs-site:
+	@./run-all "cp ~/hdfs-setup/hadoop/hdfs-site.xml ~/hadoop/etc/hadoop/hdfs-site.xml"
+
+	@./run vm1 "sed -i 's/vm\*/baadalservervm/'      ~/hadoop/etc/hadoop/hdfs-site.xml"
+	@./run vm2 "sed -i 's/vm\*/baadalvm/'            ~/hadoop/etc/hadoop/hdfs-site.xml"
+	@./run vm3 "sed -i 's/vm\*/baadalservervm/'      ~/hadoop/etc/hadoop/hdfs-site.xml"
+	@./run vm4 "sed -i 's/vm\*/baadalvm/'            ~/hadoop/etc/hadoop/hdfs-site.xml"
+
+# TODO: Per VM folders
+sync-logs:
+	@rsync -r vm1:~/hadoop/logs .
+
+show-ports:
+	@./run-all "netstat -ntulp"
+
+# https://askubuntu.com/questions/87665
+change-hostname:
+	@grep -v "^#" hosts | cut -f2 | xargs -P0 -I{} ./run -sudo {} hostname {}
+	@grep -v "^#" hosts | cut -f2 | xargs -P0 -I{} ./run -sudo {} sed -i s/baadalvm/{}/ /etc/hostname # change hostname
+	@grep -v "^#" hosts | cut -f2 | xargs -P0 -I{} ./run -sudo {} sed -i s/baadalvm/{}/ /etc/hosts # comment the 127.0.1.1 line

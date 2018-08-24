@@ -49,7 +49,7 @@ vm4 | COL733_Keshav_csz178058_04_new | 10.17.6.91   | Desktop | baadalvm
 
         + Copy Public keys to all machines
             * (requires you to enter the password 16 times)
-            
+
             * `./run vm* "grep -v '^#' ~/hdfs-setup/hosts | cut -f2 | xargs -I{} ssh-copy-id -i ~/.ssh/id_rsa.pub {}"`
 
 ---
@@ -58,12 +58,43 @@ vm4 | COL733_Keshav_csz178058_04_new | 10.17.6.91   | Desktop | baadalvm
     - `./run-all -sudo apt up{date, grade}`
     - `make restart-all`
 
-* Instal Java
+* Install Java
     - `./run-all -sudo apt install -y "openjdk-7-{jre,jdk}"`
+
+* Install `ranger` file manager
+    - `./run-all -sudo apt install -y ranger`
 
 * Send local files to remote machines
     - `./run-all mkdir -p "~/hdfs-setup"`
     - `make sync`
 
 * Send Hadoop tarball to all machines
-    - `grep -v "^#" hosts | cut -f2 | xargs -P 0 -I{} rsync -aq /home/dufferzafar/dev/cloud-computing/_Help/hadoop-2.6.5.tar.gz {}:"/tmp/"`
+    - `grep -v "^#" hosts | cut -f2 | xargs -P 0 -I{} rsync -aq /home/dufferzafar/dev/cloud-computing/_Help/hadoop-2.6.5.tar.gz {}:"~/"`
+
+* Extract Hadoop tarball 
+    - `./run-all "tar -xvzf ~/hadoop-2.6.5.tar.gz"`
+    - `./run-all "mv ~/hadoop-2.6.5 ~/hadoop"`
+
+* Link `.bash_profile`
+    - `/run-all "ln -sf ~/hdfs-setup/.bash_profile ~/.bash_profile"`
+
+* Link common config files
+    - (could've just `cp`ed the files)
+
+    - `./run-all "for f in \$(ls ~/hdfs-setup/hadoop); do ln -f ~/hdfs-setup/hadoop/\$f ~/hadoop/etc/hadoop/\$f; done"`
+
+* Copy `hdfs-site.xml`
+    - (which will be different at all machines)
+
+    - `make edit-hdfs-site`
+
+* Make `hdfs` directory
+    - `./run-all "mkdir -p ~/hdfs/namenode && mkdir -p ~/hdfs/datanode"`
+
+* Format namenode
+    - `./run vm1 "~/hadoop/bin/hadoop namenode -format"`
+
+* Change hostnames of all machines 
+    - (because of some log file issue, which results in only one datanode to be visible on the UI)
+
+    - `make change-hostname`
