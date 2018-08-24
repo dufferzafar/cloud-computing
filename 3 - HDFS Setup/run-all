@@ -3,10 +3,19 @@
 # Run command on all nodes
 
 # TODO: Expand $NODE in all arguments
-# eg: ./run-all ls /home/$NODE
-for NODE in $(cut -f2 hosts);
+
+# eg: ./run-all -sudo ls /home/$NODE
+
+USER=""
+if [ $1 == "-sudo" ]; then
+    USER="root@";
+    shift
+fi
+
+for NODE in $(cut -f2 hosts | grep -v "^#");
 do
     echo $NODE;
-    ssh -qt $NODE $*;
+    # echo ssh -qt $USER$NODE $*;
+    ssh -qt $USER$NODE $*;
     printf "\n";
 done
