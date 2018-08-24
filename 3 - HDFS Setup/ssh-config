@@ -1,0 +1,11 @@
+Host vm1
+    User baadalservervm
+
+Host vm2
+    User baadalvm
+
+Host vm3
+    User baadalservervm
+
+Host vm4
+    User baadalvm
