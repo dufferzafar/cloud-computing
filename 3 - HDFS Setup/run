@@ -2,7 +2,13 @@
 
 # Run command on one node
 
+USER=""
+if [ $1 == "-sudo" ]; then
+    USER="root@";
+    shift
+fi
+
 vm=$1
 shift
 
-ssh -qt $vm $*;
+ssh -qt $USER$vm $*;
