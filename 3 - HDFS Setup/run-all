@@ -7,7 +7,7 @@
 # eg: ./run-all -sudo ls /home/$NODE
 
 USER=""
-if [ $1 == "-sudo" ]; then
+if [ "$1" == "-sudo" ]; then
     USER="root@";
     shift
 fi

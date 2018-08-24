@@ -3,7 +3,7 @@
 # Run command on one node
 
 USER=""
-if [ $1 == "-sudo" ]; then
+if [ "$1" == "-sudo" ]; then
     USER="root@";
     shift
 fi
