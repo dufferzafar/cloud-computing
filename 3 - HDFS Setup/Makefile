@@ -1,4 +1,5 @@
-MY_IP := $(shell ifconfig wlp2s0 | grep "inet addr:" | cut -d: -f2 | cut -d " " -f 1)
+# 												| tr -s " " | cut -d" " -f3
+MY_IP := $(shell ifconfig wlp2s0 | grep "inet " | awk '{print $$2}')
 
 stop-all: stop-hdfs
 start-all: start-hdfs
@@ -17,9 +18,9 @@ stop-hdfs:
 	./run vm3 "~/hadoop/sbin/hadoop-daemon.sh" stop datanode
 	./run vm4 "~/hadoop/sbin/hadoop-daemon.sh" stop datanode
 
-restart-all: stop-all
-	./run-all sudo shutdown -r now
-
+# stop-all
+restart-all:
+	./run-all -sudo shutdown -r now
 
 hdfs-du:
 	./run-all du -h -d0 "~/hdfs"
@@ -41,9 +42,13 @@ user-pass:
 	ssh vm4
 
 mount-src-harish:
-	@#./run vm1 mkdir -p "~/github-analytics/src-harish"
-	@echo sshfs hthuwal@$(MY_IP):/home/hthuwal/IITD/COP701/github-analytics/src /home/vm1/github-analytics/src-harish
+	@#./run vm1 mkdir -p "~/hdfs-setup/src-harish"
+	@echo sshfs hthuwal@$(MY_IP):"/home/hthuwal/IITD/COP701/hdfs-setup/src" ~/hdfs-setup/src-harish
 
 mount-src-zafar:
-	@#./run vm1 mkdir -p "~/github-analytics/src-zafar"
-	@echo sshfs dufferzafar@$(MY_IP):/home/dufferzafar/dev/github-analytics/src /home/vm1/github-analytics/src-zafar
+	@#./run vm1 mkdir -p "~/hdfs-setup/src-zafar"
+	@echo sshfs dufferzafar@$(MY_IP):"/home/dufferzafar/dev/cloud-computing/3 - HDFS Setup/" ~/hdfs-setup/src-zafar
+
+# Sync files to baadal machines
+sync:
+	@grep -v "^#" hosts | cut -f2 | xargs -I{} rsync -a --info=progress2 ./* {}:"~/hdfs-setup/"
