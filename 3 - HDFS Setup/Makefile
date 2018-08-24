@@ -1,9 +1,6 @@
 # 												| tr -s " " | cut -d" " -f3
 MY_IP := $(shell ifconfig wlp2s0 | grep "inet " | awk '{print $$2}')
 
-stop-all: stop-hdfs
-start-all: start-hdfs
-
 start-hdfs:
 	./run vm1 "~/hadoop/sbin/hadoop-daemon.sh" start namenode
 
@@ -18,7 +15,6 @@ stop-hdfs:
 	./run vm3 "~/hadoop/sbin/hadoop-daemon.sh" stop datanode
 	./run vm4 "~/hadoop/sbin/hadoop-daemon.sh" stop datanode
 
-# stop-all
 restart-all:
 	./run-all -sudo shutdown -r now
 
@@ -26,7 +22,7 @@ hdfs-du:
 	./run-all du -h -d0 "~/hdfs"
 
 hdfs-report:
-	./run vm1 hdfs dfsadmin -report
+	./run vm1 "~/hadoop/bin/hdfs" dfsadmin -report
 
 # By default it asks to change password
 root-pass:
@@ -63,8 +59,14 @@ edit-hdfs-site:
 	@./run vm4 "sed -i 's/vm\*/baadalvm/'            ~/hadoop/etc/hadoop/hdfs-site.xml"
 
 # TODO: Per VM folders
-sync-logs:
-	@rsync -r vm1:~/hadoop/logs .
+.PHONY: logs
+logs:
+	@rm -rf logs/
+	@mkdir -p logs/vm1/ logs/vm2/ logs/vm3/ logs/vm4/
+	@rsync -r vm1:~/hadoop/logs/ logs/vm1/
+	@rsync -r vm2:~/hadoop/logs/ logs/vm2/
+	@rsync -r vm3:~/hadoop/logs/ logs/vm3/
+	@rsync -r vm4:~/hadoop/logs/ logs/vm4/
 
 show-ports:
 	@./run-all "netstat -ntulp"
@@ -73,4 +75,15 @@ show-ports:
 change-hostname:
 	@grep -v "^#" hosts | cut -f2 | xargs -P0 -I{} ./run -sudo {} hostname {}
 	@grep -v "^#" hosts | cut -f2 | xargs -P0 -I{} ./run -sudo {} sed -i s/baadalvm/{}/ /etc/hostname # change hostname
-	@grep -v "^#" hosts | cut -f2 | xargs -P0 -I{} ./run -sudo {} sed -i s/baadalvm/{}/ /etc/hosts # comment the 127.0.1.1 line
+	# @grep -v "^#" hosts | cut -f2 | xargs -P0 -I{} ./run -sudo {} sed -i s/baadalvm/{}/ /etc/hosts # comment the 127.0.1.1 line
+
+format: stop-hdfs
+	@./run-all "rm -rf ~/hdfs/"
+	@./run-all "mkdir -p ~/hdfs/namenode && mkdir -p ~/hdfs/datanode"
+	@./run vm1 "~/hadoop/bin/hadoop namenode -format"
+
+# rm-current:
+# 	@./run-all "rm -rf ~/hdfs/datanode/current"
+
+link-config:
+	@./run-all "for f in \$(ls ~/hdfs-setup/hadoop); do ln -f ~/hdfs-setup/hadoop/\$f ~/hadoop/etc/hadoop/\$f; done"

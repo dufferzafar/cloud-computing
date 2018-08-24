@@ -61,8 +61,10 @@ vm4 | COL733_Keshav_csz178058_04_new | 10.17.6.91   | Desktop | baadalvm
 * Install Java
     - `./run-all -sudo apt install -y "openjdk-7-{jre,jdk}"`
 
-* Install `ranger` file manager
-    - `./run-all -sudo apt install -y ranger`
+* Install misc. tools
+    - (ranger is a CLI file manager, vim is vim)
+
+    - `./run-all -sudo apt install -y ranger vim`
 
 * Send local files to remote machines
     - `./run-all mkdir -p "~/hdfs-setup"`
