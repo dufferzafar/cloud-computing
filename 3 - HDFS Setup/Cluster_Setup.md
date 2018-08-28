@@ -100,3 +100,32 @@ vm4 | COL733_Keshav_csz178058_04_new | 10.17.6.91   | Desktop | baadalvm
     - (because of some log file issue, which results in only one datanode to be visible on the UI)
 
     - `make change-hostname`
+
+<!-- 
+
+https://www.edureka.co/blog/setting-up-a-multi-node-cluster-in-hadoop-2.X
+
+JDK 7 || Hadoop 2.6.5
+
+Yarn
+
+-->
+
+## Testing for file blocks etc.
+
+**On VM1**
+
+* Generate 4 200 MB files
+    - `seq 4 | xargs -I{} fallocate -l 200M {}.txt`
+
+* Upload to data nodes
+    - `seq 4 | xargs -I{} hdfs dfs -put {}.txt /`
+
+* Check block distribution
+    - `hdfs fsck / -files -blocks -locations`
+
+* Shutdown VM 2
+    - `./run -sudo vm2 shutdown -r now`
+
+* Restore VM 2
+    - `./run vm2 "~/hadoop/sbin/hadoop-daemon.sh" start datanode`
