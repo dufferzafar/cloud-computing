@@ -55,14 +55,25 @@ edit-hdfs-site:
 
 # Download logs from all machines into a local folder
 # Used for debugging
-.PHONY: logs
-logs:
+.PHONY: fetch-logs
+fetch-logs:
 	@rm -rf logs/
 	@mkdir -p logs/vm1/ logs/vm2/ logs/vm3/ logs/vm4/
 	@rsync -r vm1:~/hadoop/logs/ logs/vm1/
 	@rsync -r vm2:~/hadoop/logs/ logs/vm2/
 	@rsync -r vm3:~/hadoop/logs/ logs/vm3/
 	@rsync -r vm4:~/hadoop/logs/ logs/vm4/
+
+# Download config files from all machines into a local folder
+# Used for preparing the report
+.PHONY: fetch-config
+fetch-config:
+	@rm -rf configs/
+	@mkdir -p configs/vm1/ configs/vm2/ configs/vm3/ configs/vm4/
+	@rsync -r vm1:~/hadoop/etc/hadoop/ configs/vm1/
+	@rsync -r vm2:~/hadoop/etc/hadoop/ configs/vm2/
+	@rsync -r vm3:~/hadoop/etc/hadoop/ configs/vm3/
+	@rsync -r vm4:~/hadoop/etc/hadoop/ configs/vm4/
 
 # Used to confirm that java
 show-ports:
