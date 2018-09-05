@@ -1,11 +1,16 @@
 ## Disk Virtualization
 
+The code corresponding to this assignment is [present here.](https://github.com/SaiKeshav/diskV)
+
+---
+
 ### Tasks
 
 #### 3.1. Disk Virtualization (Consolidation & Partitioning)
 
-- Create two arrays for storing Blocks of disks A and B.
-- Block size is 100 bytes. Disk A has 200 blocks and Disk B has 300 Blocks
+- Number of available disks should be read from a file.
+- ~~Create two arrays for storing Blocks of disks A and B.~~
+- ~~Block size is 100 bytes. Disk A has 200 blocks and Disk B has 300 Blocks~~
 - Provide an API to a programmer so that it appear as one disk D of 500
 blocks
 - APIs could be Write / Read (block_No, block_inf) where block_no is 1..500 
